@@ -14,11 +14,14 @@ from rclone_python.remote_types import RemoteTypes
 # debug flag enables/disables raw output of rclone progresses in the terminal
 DEBUG = False
 
+
 class CouldNotInstall(Exception):
     ...
 
+
 class UnsupportedOs(Exception):
     ...
+
 
 class RcloneException(ChildProcessError):
     def __init__(self, description, error_msg):
@@ -28,10 +31,12 @@ class RcloneException(ChildProcessError):
 
 
 class Remote:
+    """ Describe an rclone remote. """
     pass
 
 
 class Rclone:
+    """ Base class for the library. """
     def __init__(self):
         self.installed: bool = self.is_installed()
         # TODO:
@@ -51,8 +56,8 @@ class Rclone:
             case _:
                 raise UnsupportedOs(f"""
                     {platform.system()} is not yet supported by this library!
-                    Please manually install rclone by following the instruments here: https://rclone.org/"
-                """)
+                    Please manually install rclone by following the instruments here: 
+                    https://rclone.org""")
 
     def is_installed(self) -> bool:
         installed: Optional[str] = shutil.which("rclone")
@@ -84,7 +89,7 @@ class Rclone:
 #         return func(*args, **kwargs)
 #     return wrapper
 
-# NOTE: moved to Rclone class
+# NOTE: This has been moved to Rclone class
 #
 # def is_installed() -> bool:
 #     """
@@ -207,7 +212,8 @@ def copy(
     out_path: str,
     ignore_existing=False,
     show_progress=True,
-    listener: Callable[[Dict], None] = None,
+    # TODO: fix this type
+    listener: Callable[[Dict], None]=None,
     args=None,
     pbar=None,
 ):
@@ -243,7 +249,8 @@ def copyto(
     out_path: str,
     ignore_existing=False,
     show_progress=True,
-    listener: Callable[[Dict], None] = None,
+    # TODO: fix this type
+    listener: Callable[[Dict], None]=None,
     args=None,
     pbar=None,
 ):
@@ -574,7 +581,7 @@ def hash(
     download=False,
     checkfile: Optional[str] = None,
     output_file: Optional[str] = None,
-    args: List[str] = None,
+    args: Optional[list[str]] = None,
 ) -> Union[None, str, bool, Dict[str, str], Dict[str, bool]]:
     """Produces a hashsum file for all the objects in the path.
 

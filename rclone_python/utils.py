@@ -23,26 +23,30 @@ from rich.progress import (
 # ---------------------------------------------------------------------------- #
 
 
-# NOTE: This is totally unecessary. Honestly makes code that uses this function harder to read.
+# NOTE: This is totally unnecessary -- honestly makes code that uses this function harder to read.
 # def args2string(args: List[str]) -> str:
 #     # separate flags/ named arguments by a space
 #     return " ".join(args)
 
 
+# NOTE: This is trying to provide a wrapper around subprocess.run(); like the
+# @__check_installed decorators in rclone.py, while I can see what the author was intending to do,
+# I think it's unnecessary and too clever by half.
+# Better to just call subprocess.run() as needed, I think.
 # TODO:
 # - `shell=True` should NOT be the default. subprocess recommends against it for security reasons.
-def run_cmd(command: str, args: List[str] = (), shell=True, encoding="utf-8") -> subprocess.CompletedProcess:
-    # add optional arguments and flags to the command
-    args_str = args2string(args)
-    command = f"{command} {args_str}"
-
-    return subprocess.run(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=shell,
-        encoding=encoding,
-    )
+# def run_cmd(command: str, args: List[str] = (), shell=True, encoding="utf-8") -> subprocess.CompletedProcess:
+#     # add optional arguments and flags to the command
+#     args_str = args2string(args)
+#     command = f"{command} {args_str}"
+#
+#     return subprocess.run(
+#         command,
+#         stdout=subprocess.PIPE,
+#         stderr=subprocess.PIPE,
+#         shell=shell,
+#         encoding=encoding,
+#     )
 
 
 def shorten_filepath(in_path: str, max_length: int) -> str:

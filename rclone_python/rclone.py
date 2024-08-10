@@ -1,7 +1,7 @@
 import json
 import re
 import logging
-from functools import wraps
+# from functools import wraps
 import shutil
 from typing import Optional, Union, List, Dict, Callable
 import subprocess
@@ -31,8 +31,32 @@ class RcloneException(ChildProcessError):
 
 
 class Remote:
-    """ Describe an rclone remote. """
-    pass
+    """ Describes an rclone remote. """
+    def __init__(self, name: str):
+        self.name: str = self.__sanitize_name(name)
+
+    @staticmethod
+    def __sanitize_name(name: str) -> str:
+        if not name.endswith(":"):
+            # if the remote name missed the colon manually add it.
+            name += ":"
+        return name
+
+    def about(self) -> dict:
+        """
+        Executes the rclone about command and returns the retrieved json as a dictionary.
+        """
+        result = subprocess.run(["rclone", "about", self.name, "--json"], encoding="utf-8")
+        if result.returncode != 0:
+            raise Exception( f"An error occurred while executing the about command: {result.stderr}")
+        return json.loads(result.stdout)
+
+        # original code
+        # process = utils.run_cmd(f"rclone about {name} --json")
+        # if process.returncode == 0:
+        #     return json.loads(process.stdout)
+        # else:
+        #     raise Exception(f"An error occurred while executing the about command: {process.stderr}")
 
 
 class Rclone:
@@ -41,6 +65,22 @@ class Rclone:
         self.installed: bool = self.is_installed()
         # TODO:
         # self.remotes: Remote
+
+    def is_installed(self) -> bool:
+        installed: Optional[str] = shutil.which("rclone")
+        if installed is not None:
+            return True
+        else:
+            answer = input("rclone is not installed on your system. Would you like to install it? ")
+            if answer == "y":
+                successfully_installed = self.__install()
+                if successfully_installed:
+                    return True
+                else:
+                    # TODO: Make this actually helpful :p
+                    raise CouldNotInstall(f"Could not install rclone. Sorry!")
+            else:
+                return False
 
     def __install(self):
         match platform.system():
@@ -59,22 +99,6 @@ class Rclone:
                     Please manually install rclone by following the instruments here: 
                     https://rclone.org""")
 
-    def is_installed(self) -> bool:
-        installed: Optional[str] = shutil.which("rclone")
-        if installed is not None:
-            return True
-        else:
-            answer = input("rclone is not installed on your system. Would you like to install it? ")
-            if answer == "y":
-                successfully_installed = self.__install()
-                if successfully_installed:
-                    return True
-                else:
-                    # TODO: Make this actually helpful :p
-                    raise CouldNotInstall(f"Could not install rclone. Sorry!")
-            else:
-                return False
-    
 
 # NOTE: This seems kind of unnecessary to me. 
 # Replacing this with Rclone.install()
@@ -88,6 +112,7 @@ class Rclone:
 #             )
 #         return func(*args, **kwargs)
 #     return wrapper
+
 
 # NOTE: This has been moved to Rclone class
 #

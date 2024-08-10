@@ -29,9 +29,9 @@ from rich.progress import (
 #     return " ".join(args)
 
 
-def run_cmd(
-    command: str, args: List[str] = (), shell=True, encoding="utf-8"
-) -> subprocess.CompletedProcess:
+# TODO:
+# - `shell=True` should NOT be the default. subprocess recommends against it for security reasons.
+def run_cmd(command: str, args: List[str] = (), shell=True, encoding="utf-8") -> subprocess.CompletedProcess:
     # add optional arguments and flags to the command
     args_str = args2string(args)
     command = f"{command} {args_str}"

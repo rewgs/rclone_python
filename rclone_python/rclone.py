@@ -614,9 +614,11 @@ def _rclone_transfer_operation(
     command += " --progress"
 
     # in path
-    command += f' "{in_path}"'
+    # command += f' "{in_path}"'
+    command += f" {in_path}"
     # out path
-    command += f' "{out_path}"'
+    # command += f' "{out_path}"'
+    command += f" {out_path}"
 
     # optional named arguments/flags
     command += utils.args2string(args)
@@ -634,8 +636,11 @@ def _rclone_transfer_operation(
     if process.wait() == 0:
         logging.info("Cloud upload completed.")
     else:
-        _, err = process.communicate()
-        raise RcloneException(
-            description=f"{command_descr} from {in_path} to {out_path} failed",
-            error_msg=err.decode("utf-8"),
-        )
+        result: tuple = process.communicate()
+        data: str = result[0].decode("utf-8")
+        err: str = result[1].decode("utf-8")
+        if err != "" and err is not None:
+            raise RcloneException(
+                description=f"{command_descr} from {in_path} to {out_path} failed",
+                error_msg = err
+            )

@@ -1,3 +1,7 @@
+# TODO:
+# - Split out "general functions" into `Rclone` or perhaps a "helpers" file.
+# - Split out "progressbar related functions" into its own thing.
+
 import re
 import subprocess
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -19,9 +23,10 @@ from rich.progress import (
 # ---------------------------------------------------------------------------- #
 
 
-def args2string(args: List[str]) -> str:
-    # separate flags/ named arguments by a space
-    return " ".join(args)
+# NOTE: This is totally unecessary. Honestly makes code that uses this function harder to read.
+# def args2string(args: List[str]) -> str:
+#     # separate flags/ named arguments by a space
+#     return " ".join(args)
 
 
 def run_cmd(
